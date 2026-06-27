@@ -1,0 +1,4 @@
+# Copy this file to secrets.toml and fill in your real key.
+# secrets.toml is gitignored — never commit real API keys.
+
+TOGETHER_API_KEY = "your-together-api-key-here"
