@@ -2,7 +2,7 @@
 
 A deployed, single-agent Vision-Language Model app for crop disease diagnosis from leaf photos — built as the lightweight, production-facing companion to **[VIDA+PANDA](https://github.com/YOUR_USERNAME/vida-panda-vlm-debate)**, a multi-agent VLM debate framework for the same task.
 
-**[Live demo →](https://your-app-url.streamlit.app)** *(update once deployed)*
+**[Live demo →](https://crop-disease-vlm-demo-k5wb8fwsxnxd6pxm43bdu9.streamlit.app)** 
 
 ![Python](https://img.shields.io/badge/Python-3.10+-blue)
 ![Streamlit](https://img.shields.io/badge/Streamlit-app-FF4B4B)
