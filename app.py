@@ -25,7 +25,7 @@ st.set_page_config(
 )
 
 # ── Constants ─────────────────────────────────────────────────────────────────
-MODEL_STRING = "gemini-2.0-flash"
+MODEL_STRING = "gemini-3.1-flash-lite"
 SAMPLE_DIR = Path(__file__).parent / "sample_images"
 MAX_IMAGE_DIM = 1024  # downscale large uploads before sending to the API
 
