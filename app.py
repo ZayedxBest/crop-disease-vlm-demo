@@ -7,8 +7,6 @@ Repo: https://github.com/YOUR_USERNAME/crop-disease-vlm-demo
 Related research: https://github.com/YOUR_USERNAME/vida-panda-vlm-debate
 """
 
-import base64
-import io
 import json
 import os
 import time
@@ -16,7 +14,8 @@ from pathlib import Path
 
 import streamlit as st
 from PIL import Image
-from together import Together
+from google import genai
+from google.genai import types
 
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -26,7 +25,7 @@ st.set_page_config(
 )
 
 # ── Constants ─────────────────────────────────────────────────────────────────
-MODEL_STRING = "Qwen/Qwen2.5-VL-72B-Instruct"
+MODEL_STRING = "gemini-2.0-flash"
 SAMPLE_DIR = Path(__file__).parent / "sample_images"
 MAX_IMAGE_DIM = 1024  # downscale large uploads before sending to the API
 
@@ -73,10 +72,10 @@ Respond ONLY with valid JSON in this exact structure, no markdown fences, no ext
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def get_client():
-    api_key = st.secrets.get("TOGETHER_API_KEY") or os.environ.get("TOGETHER_API_KEY")
+    api_key = st.secrets.get("GEMINI_API_KEY") or os.environ.get("GEMINI_API_KEY")
     if not api_key:
         return None
-    return Together(api_key=api_key.strip())
+    return genai.Client(api_key=api_key.strip())
 
 
 def preprocess_image(image: Image.Image) -> Image.Image:
@@ -89,32 +88,16 @@ def preprocess_image(image: Image.Image) -> Image.Image:
     return image
 
 
-def image_to_base64(image: Image.Image) -> str:
-    buf = io.BytesIO()
-    image.save(buf, format="JPEG", quality=85)
-    return base64.b64encode(buf.getvalue()).decode("utf-8")
-
-
-def diagnose(client: Together, image: Image.Image) -> dict:
-    b64 = image_to_base64(image)
-    response = client.chat.completions.create(
+def diagnose(client: genai.Client, image: Image.Image) -> dict:
+    response = client.models.generate_content(
         model=MODEL_STRING,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type": "text", "text": SYSTEM_PROMPT},
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/jpeg;base64,{b64}"},
-                    },
-                ],
-            }
-        ],
-        max_tokens=400,
-        temperature=0.2,
+        contents=[SYSTEM_PROMPT, image],
+        config=types.GenerateContentConfig(
+            temperature=0.2,
+            max_output_tokens=400,
+        ),
     )
-    raw = response.choices[0].message.content.strip()
+    raw = response.text.strip()
     # Strip markdown fences if the model adds them despite instructions
     if raw.startswith("```"):
         raw = raw.strip("`")
@@ -226,7 +209,7 @@ st.markdown(
 client = get_client()
 if client is None:
     st.error(
-        "No Together.ai API key found. Set `TOGETHER_API_KEY` in Streamlit "
+        "No Gemini API key found. Set `GEMINI_API_KEY` in Streamlit "
         "secrets to run this app.",
         icon="🔑",
     )
@@ -279,7 +262,7 @@ if selected_image is not None:
         st.write("")
         run = st.button("Diagnose this leaf →", type="primary", use_container_width=True)
         st.caption(
-            f"Powered by {MODEL_STRING.split('/')[-1]} via Together.ai. "
+            f"Powered by {MODEL_STRING} via the Gemini API. "
             "Single-pass inference — no multi-agent debate in this lightweight demo."
         )
 
