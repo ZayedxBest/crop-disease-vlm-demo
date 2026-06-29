@@ -74,9 +74,14 @@ Respond ONLY with valid JSON in this exact structure, no markdown fences, no ext
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def get_client():
     api_key = st.secrets.get("TOGETHER_API_KEY") or os.environ.get("TOGETHER_API_KEY")
+    # TEMPORARY DEBUG — remove after diagnosing key issue
+    if api_key:
+        st.sidebar.caption(f"Debug: key found, length={len(api_key)}, starts='{api_key[:6]}...'")
+    else:
+        st.sidebar.caption("Debug: no key found at all")
     if not api_key:
         return None
-    return Together(api_key=api_key)
+    return Together(api_key=api_key.strip())
 
 
 def preprocess_image(image: Image.Image) -> Image.Image:
