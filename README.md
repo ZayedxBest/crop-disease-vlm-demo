@@ -81,4 +81,4 @@ This is a research demo, not an agronomic decision-making tool. Single-model inf
 
 ## Author
 
-Zayed Al Aghbari — [GitHub](https://github.com/Zayedxbest) · [LinkedIn](https://linkedin.com/in/zayed-al-aghbari)
+Zayed Al Aghbari [GitHub](https://github.com/Zayedxbest) · [LinkedIn](https://linkedin.com/in/zayed-al-aghbari)
